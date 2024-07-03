@@ -21,7 +21,9 @@ struct GifPage {
             .height(24)
             .onClick(() => {
               router.back();
-            }).margin(10)
+            })
+            .margin(10)
+            .alt($r('app.media.ic_public_back'))
           Text("Flutter Appbar")
           Button({ type: ButtonType.Circle, stateEffect: true }) {
             LoadingProgress().width(20).height(20).color(0xFFFFFF)
@@ -30,7 +32,7 @@ struct GifPage {
       }
 
       ListItem() {
-        Image(this.value['data'].toString()).width("100%").objectFit(ImageFit.Auto).borderRadius(8)
+        Image(this.value['data'].toString()).width("100%").objectFit(ImageFit.Auto).borderRadius(8).alt($rawfile('loading.gif'))
       }
 
       ListItem() {

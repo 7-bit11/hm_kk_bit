@@ -1,4 +1,7 @@
 import router from '@ohos.router';
+import HotListEntity, { Topic } from '../entitys/hot_list_entity';
+import hotList from "../model/HotListModel"
+import { borderRadiuses } from '@ohos.arkui.node';
 
 @Entry
 @Component
@@ -26,21 +29,56 @@ struct Index {
       "https://konachan.net/sample/9bc194416b7a303b570acb4fc7cb38ef/Konachan.com%20-%20378151%20sample.jpg",
       "https://konachan.net/sample/6a2b1a51e129e3d1fd72937dd6e2e1e1/Konachan.com%20-%20378152%20sample.jpg"]
   scroller: Scroller = new Scroller()
+  @State hotListData: HotListEntity = new HotListEntity();
+
+  aboutToAppear() {
+    console.error("aboutToAppear============");
+    setTimeout(() => {
+      hotList.getHotListEntity().then(data => {
+        this.hotListData = data;
+      });
+    }, 1000);
+
+  }
 
   build() {
-
-    Column({ space: 10 }) {
-      Row() {
-        Text("7_bit")
-        Button({ type: ButtonType.Circle }).width(24).height(24)
-      }.width("100%").justifyContent(FlexAlign.SpaceBetween)
+    Navigation() {
+      //Column({ space: 10 }) {
+      // Row() {
+      //   Text("7_bit")
+      //   Button({ type: ButtonType.Circle }).width(24).height(24).onClick(() => {
+      //     router.pushUrl({ url: 'pages/gitPage/list_loading' }, router.RouterMode.Single,
+      //       error => {
+      //         if (error) {
+      //           console.log('跳转失败 code:' + error.code + ' msg:' + error.message)
+      //         }
+      //       });
+      //   })
+      // }.width("100%").jus tifyContent(FlexAlign.SpaceBetween)
 
       Grid(this.scroller) {
-        ForEach(this.bgColors, (url: String) => {
+        ForEach(this.hotListData.data?.topics, (topic: Topic) => {
           GridItem() {
-            Image(url.toString()).height(200).borderRadius(10)
+            Column() {
+              Image(topic.vertical_image_url)
+                .height(250)//.borderRadius(borderRadiuses(10))
+                .alt($rawfile('loading.gif'))
+                .width("100%")
+                .objectFit(ImageFit.Fill)
+                .border({
+                  radius: {
+                    topLeft: 6,
+                    topRight: 6
+                  }
+                })
+              Text(topic.title).maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis }).padding(5)
+              Text(topic.tags?.join("|")).maxLines(1).textOverflow({ overflow: TextOverflow.Ellipsis }).padding(5)
+            }
+            .borderRadius(6)
+            .backgroundColor($r("app.color.245"))
           }.onClick(() => {
-            router.pushUrl({ url: 'pages/gitPage/git_page', params: { 'data': url } }, router.RouterMode.Single,
+            router.pushUrl({ url: 'pages/gitPage/git_page', params: { 'data': topic.cover_image_url } },
+              router.RouterMode.Single,
               error => {
                 if (error) {
                   console.log('跳转失败 code:' + error.code + ' msg:' + error.message)
@@ -55,12 +93,30 @@ struct Index {
       .scrollBarColor(Color.Gray) // 滚动条颜色
       .scrollBarWidth(1) // 滚动条宽度
       .edgeEffect(EdgeEffect.None)
-      .columnsTemplate('1fr 1fr 1fr') //设置行数 以及比例
+      .columnsTemplate('1fr 1fr') //设置行数 以及比例
       .borderRadius(10)
       .columnsGap(5) //间距
       .rowsGap(5) //间距
+      .padding(10)
 
-    }.padding(10).layoutWeight(1)
+      // }.padding(10).layoutWeight(1)
 
+    }.title('LoadingMoreListDemo').titleMode(NavigationTitleMode.Free)
+
+    //.menus(this.NavigationMenus())
+  }
+
+  @Builder
+  NavigationMenus() {
+    Image('resources/base/media/startIcon.png')
+      .width(24)
+      .height(24).onClick(() => {
+      router.pushUrl({ url: 'pages/gitPage/list_loading' }, router.RouterMode.Single,
+        error => {
+          if (error) {
+            console.log('跳转失败 code:' + error.code + ' msg:' + error.message)
+          }
+        });
+    }).margin(10)
   }
 }

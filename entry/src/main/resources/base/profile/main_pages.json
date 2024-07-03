@@ -1,6 +1,7 @@
 {
   "src": [
-    "pages/Index"
-    ,"pages/gitPage/git_page"
+    "pages/Index",
+    "pages/gitPage/git_page",
+    "pages/gitPage/list_loading"
   ]
 }
