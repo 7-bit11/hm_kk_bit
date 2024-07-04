@@ -8,6 +8,7 @@ class HotListModel {
     return new Promise((resolve, reject) => {
       let httpRequest = http.createHttp();
       httpRequest.request(this.url, { method: http.RequestMethod.GET }).then(rp => {
+        console.error("=getHotListEntity=${rp.responseCode}" + rp.responseCode);
         if (rp.responseCode == 200) {
           console.error("=getHotListEntity=获取成功");
           console.error(rp.result.toString())
@@ -20,9 +21,10 @@ class HotListModel {
         console.error("=getHotListEntity=error", e.toString());
         reject("查询失败了" + e);
       }).finally(() => {
-        console.log("=getHotListEntity=", "=finally=");
+        console.error("=getHotListEntity=", "=finally=");
         reject("请稍后重试");
       });
+
     });
 
   }

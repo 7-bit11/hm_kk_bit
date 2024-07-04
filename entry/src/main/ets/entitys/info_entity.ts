@@ -1,13 +1,13 @@
 // To parse this data:
 //
-//   import { Convert, HotListEntity } from "./file";
+//   import { Convert, InfoEntity } from "./file";
 //
-//   const hotListEntity = Convert.toHotListEntity(json);
+//   const infoEntity = Convert.toInfoEntity(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export default class HotListEntity {
+export default  class  InfoEntity {
   code?: number;
   message?: string;
   data?: Data;
@@ -15,27 +15,53 @@ export default class HotListEntity {
 }
 
 export interface Data {
-  topics?: Topic[];
-  week_days?: string[];
-  pos?: number;
+  topic_info?: TopicInfo;
+  code?: number;
 }
 
-export interface Topic {
+export interface TopicInfo {
   id?: number;
   cover_image_url?: string;
   vertical_image_url?: string;
-  square_image_url?: string;
   title?: string;
   description?: string;
   likes_count?: string;
+  origin_likes_count?: number;
+  comments_count?: string;
+  origin_comments_count?: number;
+  popularity_info?: string;
+  fav_count?: string;
+  comics_count?: number;
+  comic_body_count?: number;
   tags?: string[];
+  comics?: Comic[];
+  first_comic_id?: number;
   user?: User;
-  signing_status?: SigningStatus;
-  update_remind?: string;
+  signing_status?: string;
+  is_free?: boolean;
+  update_status?: string;
+  is_favourite?: boolean;
 }
 
-export enum SigningStatus {
-  签约作品 = "签约作品",
+export interface Comic {
+  id?: number;
+  title?: string;
+  cover_image_url?: string;
+  is_pay_comic?: boolean;
+  need_vip?: boolean;
+  locked?: boolean;
+  locked_code?: number;
+  likes_count?: string;
+  likes_count_number?: number;
+  created_at?: CreatedAt;
+  is_free?: boolean;
+  is_vip_exclusive?: boolean;
+  vip_exclusive_type?: number;
+  vip_time_free_type?: number;
+}
+
+export enum CreatedAt {
+  The0627 = "06-27",
 }
 
 export interface User {
@@ -47,12 +73,12 @@ export interface User {
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static toHotListEntity(json: string): HotListEntity {
-    return cast(JSON.parse(json), r("HotListEntity"));
+  public static toInfoEntity(json: string): InfoEntity {
+    return cast(JSON.parse(json), r("InfoEntity"));
   }
 
-  public static hotListEntityToJson(value: HotListEntity): string {
-    return JSON.stringify(uncast(value, r("HotListEntity")), null, 2);
+  public static infoEntityToJson(value: InfoEntity): string {
+    return JSON.stringify(uncast(value, r("InfoEntity")), null, 2);
   }
 }
 
@@ -69,7 +95,7 @@ function prettyTypeName(typ: any): string {
       return `an optional ${prettyTypeName(typ[1])}`;
     } else {
       return `one of [${typ.map(a => {
-        return prettyTypeName(a) ;
+        return prettyTypeName(a)  ;
       }).join(", ")}]`;
     }
   } else if (typeof typ === "object" && typ.literal !== undefined) {
@@ -231,36 +257,61 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  "HotListEntity": o([
+  "InfoEntity": o([
     { json: "code", js: "code", typ: u(undefined, 0) },
     { json: "message", js: "message", typ: u(undefined, "") },
     { json: "data", js: "data", typ: u(undefined, r("Data")) },
     { json: "request_id", js: "request_id", typ: u(undefined, "") },
   ], false),
   "Data": o([
-    { json: "topics", js: "topics", typ: u(undefined, a(r("Topic"))) },
-    { json: "week_days", js: "week_days", typ: u(undefined, a("")) },
-    { json: "pos", js: "pos", typ: u(undefined, 0) },
+    { json: "topic_info", js: "topic_info", typ: u(undefined, r("TopicInfo")) },
+    { json: "code", js: "code", typ: u(undefined, 0) },
   ], false),
-  "Topic": o([
+  "TopicInfo": o([
     { json: "id", js: "id", typ: u(undefined, 0) },
     { json: "cover_image_url", js: "cover_image_url", typ: u(undefined, "") },
     { json: "vertical_image_url", js: "vertical_image_url", typ: u(undefined, "") },
-    { json: "square_image_url", js: "square_image_url", typ: u(undefined, "") },
     { json: "title", js: "title", typ: u(undefined, "") },
     { json: "description", js: "description", typ: u(undefined, "") },
     { json: "likes_count", js: "likes_count", typ: u(undefined, "") },
+    { json: "origin_likes_count", js: "origin_likes_count", typ: u(undefined, 0) },
+    { json: "comments_count", js: "comments_count", typ: u(undefined, "") },
+    { json: "origin_comments_count", js: "origin_comments_count", typ: u(undefined, 0) },
+    { json: "popularity_info", js: "popularity_info", typ: u(undefined, "") },
+    { json: "fav_count", js: "fav_count", typ: u(undefined, "") },
+    { json: "comics_count", js: "comics_count", typ: u(undefined, 0) },
+    { json: "comic_body_count", js: "comic_body_count", typ: u(undefined, 0) },
     { json: "tags", js: "tags", typ: u(undefined, a("")) },
+    { json: "comics", js: "comics", typ: u(undefined, a(r("Comic"))) },
+    { json: "first_comic_id", js: "first_comic_id", typ: u(undefined, 0) },
     { json: "user", js: "user", typ: u(undefined, r("User")) },
-    { json: "signing_status", js: "signing_status", typ: u(undefined, r("SigningStatus")) },
-    { json: "update_remind", js: "update_remind", typ: u(undefined, "") },
+    { json: "signing_status", js: "signing_status", typ: u(undefined, "") },
+    { json: "is_free", js: "is_free", typ: u(undefined, true) },
+    { json: "update_status", js: "update_status", typ: u(undefined, "") },
+    { json: "is_favourite", js: "is_favourite", typ: u(undefined, true) },
+  ], false),
+  "Comic": o([
+    { json: "id", js: "id", typ: u(undefined, 0) },
+    { json: "title", js: "title", typ: u(undefined, "") },
+    { json: "cover_image_url", js: "cover_image_url", typ: u(undefined, "") },
+    { json: "is_pay_comic", js: "is_pay_comic", typ: u(undefined, true) },
+    { json: "need_vip", js: "need_vip", typ: u(undefined, true) },
+    { json: "locked", js: "locked", typ: u(undefined, true) },
+    { json: "locked_code", js: "locked_code", typ: u(undefined, 0) },
+    { json: "likes_count", js: "likes_count", typ: u(undefined, "") },
+    { json: "likes_count_number", js: "likes_count_number", typ: u(undefined, 0) },
+    { json: "created_at", js: "created_at", typ: u(undefined, r("CreatedAt")) },
+    { json: "is_free", js: "is_free", typ: u(undefined, true) },
+    { json: "is_vip_exclusive", js: "is_vip_exclusive", typ: u(undefined, true) },
+    { json: "vip_exclusive_type", js: "vip_exclusive_type", typ: u(undefined, 0) },
+    { json: "vip_time_free_type", js: "vip_time_free_type", typ: u(undefined, 0) },
   ], false),
   "User": o([
     { json: "user_id", js: "user_id", typ: u(undefined, 0) },
     { json: "nickname", js: "nickname", typ: u(undefined, "") },
     { json: "avatar", js: "avatar", typ: u(undefined, "") },
   ], false),
-  "SigningStatus": [
-    "签约作品",
+  "CreatedAt": [
+    "06-27",
   ],
 };
