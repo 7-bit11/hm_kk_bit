@@ -2,6 +2,7 @@
   "src": [
     "pages/Index",
     "pages/gitPage/git_page",
-    "pages/gitPage/list_loading"
+    "pages/gitPage/list_loading",
+    "pages/gitPage/comic_page"
   ]
 }

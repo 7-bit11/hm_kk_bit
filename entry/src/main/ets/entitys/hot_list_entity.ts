@@ -69,7 +69,7 @@ function prettyTypeName(typ: any): string {
       return `an optional ${prettyTypeName(typ[1])}`;
     } else {
       return `one of [${typ.map(a => {
-        return prettyTypeName(a) ;
+        return prettyTypeName(a)  ;
       }).join(", ")}]`;
     }
   } else if (typeof typ === "object" && typ.literal !== undefined) {

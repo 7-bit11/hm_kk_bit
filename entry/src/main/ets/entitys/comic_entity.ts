@@ -1,13 +1,13 @@
 // To parse this data:
 //
-//   import { Convert, InfoEntity } from "./file";
+//   import { Convert, ComicEntity } from "./file";
 //
-//   const infoEntity = Convert.toInfoEntity(json);
+//   const comicEntity = Convert.toComicEntity(json);
 //
 // These functions will throw an error if the JSON doesn't
 // match the expected interface, even if the JSON is valid.
 
-export default  class  InfoEntity {
+export default class ComicEntity {
   code?: number;
   message?: string;
   data?: Data;
@@ -15,53 +15,79 @@ export default  class  InfoEntity {
 }
 
 export interface Data {
+  comic_info?: ComicInfo;
   topic_info?: TopicInfo;
-  code?: number;
+  next_comic_info?: NextComicInfo;
+  recommend_topics?: RecommendTopic[];
+  source?: string;
+  share_info?: ShareInfo;
+  logged_in?: boolean;
 }
 
-export interface TopicInfo {
-  id?: number;
-  cover_image_url?: string;
-  vertical_image_url?: string;
-  title?: string;
-  description?: string;
-  likes_count?: string;
-  origin_likes_count?: number;
-  comments_count?: string;
-  origin_comments_count?: number;
-  popularity_info?: string;
-  fav_count?: string;
-  comics_count?: number;
-  comic_body_count?: number;
-  tags?: string[];
-  comics?: Comic[];
-  first_comic_id?: number;
-  user?: User;
-  signing_status?: string;
-  is_free?: boolean;
-  update_status?: string;
-  is_favourite?: boolean;
-}
-
-export interface Comic {
+export interface ComicInfo {
   id?: number;
   title?: string;
   cover_image_url?: string;
+  images?: string[];
+  comic_images?: ComicImage[];
   is_pay_comic?: boolean;
   need_vip?: boolean;
+  is_ip_block?: boolean;
+  is_sensitive?: boolean;
+  is_published?: boolean;
   locked?: boolean;
   locked_code?: number;
+  liked?: boolean;
   likes_count?: string;
   likes_count_number?: number;
-  created_at?: CreatedAt;
+  created_at?: string;
+  is_danmu_hidden?: boolean;
   is_free?: boolean;
   is_vip_exclusive?: boolean;
   vip_exclusive_type?: number;
   vip_time_free_type?: number;
 }
 
-export enum CreatedAt {
-  The0627 = "06-27",
+export interface ComicImage {
+  width?: number;
+  height?: number;
+  url?: string;
+  width1280?: number;
+  key?: string;
+}
+
+export interface NextComicInfo {
+  next_comic_id?: number;
+  next_status?: number;
+}
+
+export interface RecommendTopic {
+  id?: number;
+  vertical_image_url?: string;
+  title?: string;
+  description?: string;
+  tags?: string[];
+}
+
+export interface ShareInfo {
+  title?: string;
+  content?: string;
+  action?: string;
+}
+
+export interface TopicInfo {
+  id?: number;
+  cover_image_url?: string;
+  vertical_image_url?: string;
+  square_image_url?: string;
+  title?: string;
+  description?: string;
+  tags?: string[];
+  user?: User;
+  signing_status?: string;
+  is_free?: boolean;
+  update_remind?: string;
+  is_favourite?: boolean;
 }
 
 export interface User {
@@ -73,12 +99,12 @@ export interface User {
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
 export class Convert {
-  public static toInfoEntity(json: string): InfoEntity {
-    return cast(JSON.parse(json), r("InfoEntity"));
+  public static toComicEntity(json: string): ComicEntity {
+    return cast(JSON.parse(json), r("ComicEntity"));
   }
 
-  public static infoEntityToJson(value: InfoEntity): string {
-    return JSON.stringify(uncast(value, r("InfoEntity")), null, 2);
+  public static comicEntityToJson(value: ComicEntity): string {
+    return JSON.stringify(uncast(value, r("ComicEntity")), null, 2);
   }
 }
 
@@ -95,7 +121,8 @@ function prettyTypeName(typ: any): string {
       return `an optional ${prettyTypeName(typ[1])}`;
     } else {
       return `one of [${typ.map(a => {
-        return prettyTypeName(a)   ;
+        return
+        prettyTypeName(a)  ;
       }).join(", ")}]`;
     }
   } else if (typeof typ === "object" && typ.literal !== undefined) {
@@ -257,61 +284,84 @@ function r(name: string) {
 }
 
 const typeMap: any = {
-  "InfoEntity": o([
+  "ComicEntity": o([
     { json: "code", js: "code", typ: u(undefined, 0) },
     { json: "message", js: "message", typ: u(undefined, "") },
     { json: "data", js: "data", typ: u(undefined, r("Data")) },
     { json: "request_id", js: "request_id", typ: u(undefined, "") },
   ], false),
   "Data": o([
+    { json: "comic_info", js: "comic_info", typ: u(undefined, r("ComicInfo")) },
     { json: "topic_info", js: "topic_info", typ: u(undefined, r("TopicInfo")) },
-    { json: "code", js: "code", typ: u(undefined, 0) },
+    { json: "next_comic_info", js: "next_comic_info", typ: u(undefined, r("NextComicInfo")) },
+    { json: "recommend_topics", js: "recommend_topics", typ: u(undefined, a(r("RecommendTopic"))) },
+    { json: "source", js: "source", typ: u(undefined, "") },
+    { json: "share_info", js: "share_info", typ: u(undefined, r("ShareInfo")) },
+    { json: "logged_in", js: "logged_in", typ: u(undefined, true) },
+  ], false),
+  "ComicInfo": o([
+    { json: "id", js: "id", typ: u(undefined, 0) },
+    { json: "title", js: "title", typ: u(undefined, "") },
+    { json: "cover_image_url", js: "cover_image_url", typ: u(undefined, "") },
+    { json: "images", js: "images", typ: u(undefined, a("")) },
+    { json: "comic_images", js: "comic_images", typ: u(undefined, a(r("ComicImage"))) },
+    { json: "is_pay_comic", js: "is_pay_comic", typ: u(undefined, true) },
+    { json: "need_vip", js: "need_vip", typ: u(undefined, true) },
+    { json: "is_ip_block", js: "is_ip_block", typ: u(undefined, true) },
+    { json: "is_sensitive", js: "is_sensitive", typ: u(undefined, true) },
+    { json: "is_published", js: "is_published", typ: u(undefined, true) },
+    { json: "locked", js: "locked", typ: u(undefined, true) },
+    { json: "locked_code", js: "locked_code", typ: u(undefined, 0) },
+    { json: "liked", js: "liked", typ: u(undefined, true) },
+    { json: "likes_count", js: "likes_count", typ: u(undefined, "") },
+    { json: "likes_count_number", js: "likes_count_number", typ: u(undefined, 0) },
+    { json: "created_at", js: "created_at", typ: u(undefined, "") },
+    { json: "is_danmu_hidden", js: "is_danmu_hidden", typ: u(undefined, true) },
+    { json: "is_free", js: "is_free", typ: u(undefined, true) },
+    { json: "is_vip_exclusive", js: "is_vip_exclusive", typ: u(undefined, true) },
+    { json: "vip_exclusive_type", js: "vip_exclusive_type", typ: u(undefined, 0) },
+    { json: "vip_time_free_type", js: "vip_time_free_type", typ: u(undefined, 0) },
+  ], false),
+  "ComicImage": o([
+    { json: "width", js: "width", typ: u(undefined, 0) },
+    { json: "height", js: "height", typ: u(undefined, 0) },
+    { json: "url", js: "url", typ: u(undefined, "") },
+    { json: "width1280", js: "width1280", typ: u(undefined, 0) },
+    { json: "key", js: "key", typ: u(undefined, "") },
+  ], false),
+  "NextComicInfo": o([
+    { json: "next_comic_id", js: "next_comic_id", typ: u(undefined, 0) },
+    { json: "next_status", js: "next_status", typ: u(undefined, 0) },
+  ], false),
+  "RecommendTopic": o([
+    { json: "id", js: "id", typ: u(undefined, 0) },
+    { json: "vertical_image_url", js: "vertical_image_url", typ: u(undefined, "") },
+    { json: "title", js: "title", typ: u(undefined, "") },
+    { json: "description", js: "description", typ: u(undefined, "") },
+    { json: "tags", js: "tags", typ: u(undefined, a("")) },
+  ], false),
+  "ShareInfo": o([
+    { json: "title", js: "title", typ: u(undefined, "") },
+    { json: "content", js: "content", typ: u(undefined, "") },
+    { json: "action", js: "action", typ: u(undefined, "") },
   ], false),
   "TopicInfo": o([
     { json: "id", js: "id", typ: u(undefined, 0) },
     { json: "cover_image_url", js: "cover_image_url", typ: u(undefined, "") },
     { json: "vertical_image_url", js: "vertical_image_url", typ: u(undefined, "") },
+    { json: "square_image_url", js: "square_image_url", typ: u(undefined, "") },
     { json: "title", js: "title", typ: u(undefined, "") },
     { json: "description", js: "description", typ: u(undefined, "") },
-    { json: "likes_count", js: "likes_count", typ: u(undefined, "") },
-    { json: "origin_likes_count", js: "origin_likes_count", typ: u(undefined, 0) },
-    { json: "comments_count", js: "comments_count", typ: u(undefined, "") },
-    { json: "origin_comments_count", js: "origin_comments_count", typ: u(undefined, 0) },
-    { json: "popularity_info", js: "popularity_info", typ: u(undefined, "") },
-    { json: "fav_count", js: "fav_count", typ: u(undefined, "") },
-    { json: "comics_count", js: "comics_count", typ: u(undefined, 0) },
-    { json: "comic_body_count", js: "comic_body_count", typ: u(undefined, 0) },
     { json: "tags", js: "tags", typ: u(undefined, a("")) },
-    { json: "comics", js: "comics", typ: u(undefined, a(r("Comic"))) },
-    { json: "first_comic_id", js: "first_comic_id", typ: u(undefined, 0) },
     { json: "user", js: "user", typ: u(undefined, r("User")) },
     { json: "signing_status", js: "signing_status", typ: u(undefined, "") },
     { json: "is_free", js: "is_free", typ: u(undefined, true) },
-    { json: "update_status", js: "update_status", typ: u(undefined, "") },
+    { json: "update_remind", js: "update_remind", typ: u(undefined, "") },
     { json: "is_favourite", js: "is_favourite", typ: u(undefined, true) },
-  ], false),
-  "Comic": o([
-    { json: "id", js: "id", typ: u(undefined, 0) },
-    { json: "title", js: "title", typ: u(undefined, "") },
-    { json: "cover_image_url", js: "cover_image_url", typ: u(undefined, "") },
-    { json: "is_pay_comic", js: "is_pay_comic", typ: u(undefined, true) },
-    { json: "need_vip", js: "need_vip", typ: u(undefined, true) },
-    { json: "locked", js: "locked", typ: u(undefined, true) },
-    { json: "locked_code", js: "locked_code", typ: u(undefined, 0) },
-    { json: "likes_count", js: "likes_count", typ: u(undefined, "") },
-    { json: "likes_count_number", js: "likes_count_number", typ: u(undefined, 0) },
-    { json: "created_at", js: "created_at", typ: u(undefined, r("CreatedAt")) },
-    { json: "is_free", js: "is_free", typ: u(undefined, true) },
-    { json: "is_vip_exclusive", js: "is_vip_exclusive", typ: u(undefined, true) },
-    { json: "vip_exclusive_type", js: "vip_exclusive_type", typ: u(undefined, 0) },
-    { json: "vip_time_free_type", js: "vip_time_free_type", typ: u(undefined, 0) },
   ], false),
   "User": o([
     { json: "user_id", js: "user_id", typ: u(undefined, 0) },
     { json: "nickname", js: "nickname", typ: u(undefined, "") },
     { json: "avatar", js: "avatar", typ: u(undefined, "") },
   ], false),
-  "CreatedAt": [
-    "06-27",
-  ],
 };
