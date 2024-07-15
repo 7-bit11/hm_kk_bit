@@ -9,6 +9,7 @@
       "tablet",
       "2in1"
     ],
+    "routerMap": "$profile:router_map",
     "requestPermissions": [
       {
         "name": "ohos.permission.INTERNET"
